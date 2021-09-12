@@ -10,8 +10,26 @@ struct Person {
     name: String,
     age: usize,
 }
+#[derive(Debug, Clone)]
+struct ErrorMsg;
 
-// I AM NOT DONE
+impl std::fmt::Display for ErrorMsg {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Error")
+    }
+}
+
+impl error::Error for ErrorMsg{}
+
+
+fn is_string_numeric(str: String) -> bool {
+    for c in str.chars() {
+        if !c.is_numeric() {
+            return false;
+        }
+    }
+    return true;
+}
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -26,6 +44,17 @@ struct Person {
 impl FromStr for Person {
     type Err = Box<dyn error::Error>;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        let person_data: Vec<&str> = s.split(",").collect();
+        if person_data.len() != 2  || person_data[0] == "" || person_data[1] == "" || is_string_numeric(String::from(person_data[1])) == false {
+            Err(ErrorMsg.into())
+        }
+        else {
+            Ok(Person {
+                name : String::from(person_data[0]),
+                age : person_data[1].parse().unwrap(),
+            })
+            
+        }
     }
 }
 

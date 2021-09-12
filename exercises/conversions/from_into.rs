@@ -18,6 +18,15 @@ impl Default for Person {
     }
 }
 
+fn is_string_numeric(str: String) -> bool {
+    for c in str.chars() {
+        if !c.is_numeric() {
+            return false;
+        }
+    }
+    return true;
+}
+
 // Your task is to complete this implementation
 // in order for the line `let p = Person::from("Mark,20")` to compile
 // Please note that you'll need to parse the age component into a `usize`
@@ -33,12 +42,25 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of Person
 // Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+     
+        let person_data: Vec<&str> = s.split(",").collect();
+        if person_data.len() != 2  || person_data[0] == "" || person_data[1] == "" || is_string_numeric(String::from(person_data[1])) == false {
+            return Person::default();
+        }
+        else {
+            return Person {
+                name : String::from(person_data[0]),
+                age : person_data[1].parse().unwrap(),
+            };
+            
+        }
     }
 }
+
+
 
 fn main() {
     // Use the `from` function
